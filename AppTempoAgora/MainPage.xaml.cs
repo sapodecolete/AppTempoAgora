@@ -5,8 +5,6 @@ namespace AppTempoAgora
 {
     public partial class MainPage : ContentPage
     {
-        int count = 0;
-
         public MainPage()
         {
             InitializeComponent();
@@ -22,36 +20,38 @@ namespace AppTempoAgora
 
                     if (t != null)
                     {
-                        string dados_previsao = "";
+                        // Converter unidades
+                        double velocidadeKmH = (double)(t.speed * 3.6); // m/s para km/h
+                        double visibilidadeKm = (double)(t.visibility / 1000.0); // metros para km
 
-                        dados_previsao = $"Latitude: {t.lat} \n" +
-                                         $"Longitude: {t.lon} \n" +
-                                         $"Nascer do Sol: {t.sunrise} \n" +
-                                         $"Por do Sol: {t.sunset} \n" +
-                                         $"Temp Máx: {t.temp_max} \n" +
-                                         $"Temp Min: {t.temp_min} \n";
+                        string dados_previsao = $"Condição: {t.main}\n" +
+                                              $"Descrição: {t.description}\n" +
+                                              $"Temperatura Mín: {t.temp_min}°C\n" +
+                                              $"Temperatura Máx: {t.temp_max}°C\n" +
+                                              $"Velocidade do Vento: {velocidadeKmH:F1} km/h\n" +
+                                              $"Visibilidade: {visibilidadeKm:F1} km\n" +
+                                              $"Nascer do Sol: {t.sunrise}\n" +
+                                              $"Pôr do Sol: {t.sunset}\n" +
+                                              $"Latitude: {t.lat}\n" +
+                                              $"Longitude: {t.lon}";
 
                         lbl_res.Text = dados_previsao;
-
                     }
                     else
                     {
-
                         lbl_res.Text = "Sem dados de Previsão";
                     }
-
                 }
                 else
                 {
-                    lbl_res.Text = "Preencha a cidade.";
+                    await DisplayAlert("Atenção", "Por favor, preencha o nome da cidade.", "OK");
                 }
-
             }
             catch (Exception ex)
             {
-                await DisplayAlert("Ops", ex.Message, "OK");
+                await DisplayAlert("Erro", ex.Message, "OK");
+                lbl_res.Text = string.Empty;
             }
         }
     }
-
 }
